@@ -15,7 +15,7 @@ class Usuarios(db.Model):
     correos_usuario = db.Column(db.ARRAY(db.String(30)),unique=True, nullable=False) 
 
     def json(self):
-        return {'id' : self.id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
+        return {'id' : id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
 
 db.create_all()
 
