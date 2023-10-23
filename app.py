@@ -69,6 +69,3 @@ def ActualizarUsuario(id):
 
    except Exception:
        return make_response(jsonify({'mensaje':'error actualizando el usuario'}),500)
-
-if __name__=='__main__':
-    app.run(debug=True)
