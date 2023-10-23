@@ -13,11 +13,18 @@ class Usuarios(db.Model):
     nombre_usuario = db.Column(db.String(30),unique=True, nullable=False)
     correos_usuario = db.Column(db.ARRAY(db.String(30)),unique=True, nullable=False) 
 
-    def json(self):
-        return {'id' : id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
-
-with current_app.app_context():
+    def serialize(self):
+         return {
+            'id': self.id,
+            'name': self.name,
+            'emails': list(self.emails)
+        }
+with app.app_context():
     db.create_all()
+
+@app.route('/status/', methods=['GET'])
+def get_status():
+    return make_response(jsonify({'message:':'pong'}),200)
 
 @app.route('/usuarios', methods = ['POST'])
 def CrearUsuario():
