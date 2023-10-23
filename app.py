@@ -3,9 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
-
+db = SQLAlchemy(app)
 
 class Usuarios(db.Model):
     __nombreTabla__ = 'usuarios'
