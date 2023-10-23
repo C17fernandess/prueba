@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@flask_db:5432/postgres"
 db = SQLAlchemy(app)
 
 class Usuarios(db.Model):
