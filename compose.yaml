@@ -7,7 +7,7 @@ services:
     build: .
     restart: always
     ports:
-      - "8000:8000"
+      - "8056:8056"
     environment:
       DB_URL: postgresql://postgres:postgres@flask_db:5432/postgres
     depends_on:
