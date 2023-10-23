@@ -11,8 +11,9 @@ services:
     environment:
       DB_URL: postgresql://postgres:postgres@flask_db:5432/postgres
     depends_on:
-      flask_db :
-      condition: service_healthy
+      flask_db: # Establece una dependencia, asegurando que la base de datos esté disponible antes de iniciar la aplicación
+            condition: service_healthy
+            restart: true
 
   flask_db:
     container_name: flask_db
