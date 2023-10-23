@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, current_app, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 
-db = SQLAlchemy(app)
 
 class Usuarios(db.Model):
     __nombreTabla__ = 'usuarios'
@@ -17,7 +17,8 @@ class Usuarios(db.Model):
     def json(self):
         return {'id' : id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
 
-db.create_all()
+with current_app.app_context():
+        db.create_all()
 
 @app.route('/usuarios', methods = ['POST'])
 def CrearUsuario():
