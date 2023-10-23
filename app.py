@@ -1,4 +1,3 @@
-import array
 from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
@@ -13,7 +12,7 @@ class Usuarios(db.Model):
 
     id = db.Column(db.Integer,primary_key=True) 
     nombre_usuario = db.Column(db.String(30),unique=True, nullable=False)
-    correos_usuario = db.Column(array(db.String(30)),unique=True, nullable=False) 
+    correos_usuario = db.Column(db.ARRAY(db.String(30)),unique=True, nullable=False) 
 
 def json(self):
     return {'id' : self.id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
