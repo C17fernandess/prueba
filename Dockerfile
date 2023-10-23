@@ -2,9 +2,9 @@ FROM python:3.12-slim as build
 
 WORKDIR /app
 
-COPY requeriments.txt ./
+COPY requirements.txt ./
 
-RUN pip install -r requeriments.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
