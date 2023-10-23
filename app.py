@@ -1,4 +1,4 @@
-from flask import Flask, current_app, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
@@ -6,69 +6,80 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
 
-class Usuarios(db.Model):
-    __nombreTabla__ = 'usuarios'
+class User(db.Model):
+    __tablename__ = 'users'
 
-    id = db.Column(db.Integer,primary_key=True) 
-    nombre_usuario = db.Column(db.String(30),unique=True, nullable=False)
-    correos_usuario = db.Column(db.ARRAY(db.String(30)),unique=True, nullable=False) 
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
 
-    def serialize(self):
-         return {
-            'id': self.id,
-            'name': self.name,
-            'emails': list(self.emails)
-        }
-with app.app_context():
-    db.create_all()
+    def json(self):
+        return {'id': self.id,'username': self.username, 'email': self.email}
 
-@app.route('/status/', methods=['GET'])
-def get_status():
-    return make_response(jsonify({'message:':'pong'}),200)
+db.create_all()
 
-@app.route('/usuarios', methods = ['POST'])
-def CrearUsuario():
-   try:
-       data= request.get_json()
-       usuario= Usuarios(nombre_usuario=data['nombre_usuario'],correos_usuario= data['correos_usuario'] )
-       db.session.add(usuario)
-       db.session.commit()
-       return make_response(jsonify({'mensaje':'usuario creado'}),201)
-   except Exception:
-       return make_response(jsonify({'mensaje':'error creando el usuario'}),500)
+#create a test route
+@app.route('/test', methods=['GET'])
+def test():
+  return make_response(jsonify({'message': 'test route'}), 200)
 
-@app.route('/usuarios', methods = ['GET'])
-def ObtenerUsuarios():
-   try:
-       usuarios= Usuarios.query.all()
-       if len(usuarios):
-           return make_response(jsonify({'usuarios':[usuarios.json for usuario in usuarios]}),200)
-       return make_response(jsonify({'mensaje':'usuarios no encontrados'}),404)     
-   except Exception:
-       return make_response(jsonify({'mensaje':'error obteniendo a los usuarios'}),500)
 
-@app.route('/usuarios/<int:id>', methods = ['GET'])
-def ObtenerUsuario(id):
-   try:
-       usuario= Usuarios.query.filter_by(id=id).first()
-       return make_response(jsonify({'usuario':usuario.json()}),200)     
-   except Exception:
-       return make_response(jsonify({'mensaje':'usuario no encontrado'}),500)
-   
-@app.route('//usuarios/<int:id>', methods = ['PUT'])
-def ActualizarUsuario(id):
-   try:
-       usuario= Usuarios.query.filter_by(id=id).first()
-       if usuario:
-        data= request.get_json()
-        usuario.nombre_usuario = data['nombre_usuario']
-        usuario.correos_usuario = data['correos_usuario']
-        db.session.commit()
-        return make_response(jsonify({'mensaje':'usuario actualizado'}),200)
-       return make_response(jsonify({'mensaje':'usuario no encontrado'}),404)
+# create a user
+@app.route('/users', methods=['POST'])
+def create_user():
+  try:
+    data = request.get_json()
+    new_user = User(username=data['username'], email=data['email'])
+    db.session.add(new_user)
+    db.session.commit()
+    return make_response(jsonify({'message': 'user created'}), 201)
+  except Exception:
+    return make_response(jsonify({'message': 'error creating user'}), 500)
 
-   except Exception:
-       return make_response(jsonify({'mensaje':'error actualizando el usuario'}),500)
+# get all users
+@app.route('/users', methods=['GET'])
+def get_users():
+  try:
+    users = User.query.all()
+    return make_response(jsonify([user.json() for user in users]), 200)
+  except Exception:
+    return make_response(jsonify({'message': 'error getting users'}), 500)
 
-if __name__=='__main__':
-    app.run(debug=True)
+# get a user by id
+@app.route('/users/<int:id>', methods=['GET'])
+def get_user(id):
+  try:
+    user = User.query.filter_by(id=id).first()
+    if user:
+      return make_response(jsonify({'user': user.json()}), 200)
+    return make_response(jsonify({'message': 'user not found'}), 404)
+  except Exception:
+    return make_response(jsonify({'message': 'error getting user'}), 500)
+
+# update a user
+@app.route('/users/<int:id>', methods=['PUT'])
+def update_user(id):
+  try:
+    user = User.query.filter_by(id=id).first()
+    if user:
+      data = request.get_json()
+      user.username = data['username']
+      user.email = data['email']
+      db.session.commit()
+      return make_response(jsonify({'message': 'user updated'}), 200)
+    return make_response(jsonify({'message': 'user not found'}), 404)
+  except Exception:
+    return make_response(jsonify({'message': 'error updating user'}), 500)
+
+# delete a user
+@app.route('/users/<int:id>', methods=['DELETE'])
+def delete_user(id):
+  try:
+    user = User.query.filter_by(id=id).first()
+    if user:
+      db.session.delete(user)
+      db.session.commit()
+      return make_response(jsonify({'message': 'user deleted'}), 200)
+    return make_response(jsonify({'message': 'user not found'}), 404)
+  except Exception:
+    return make_response(jsonify({'message': 'error deleting user'}), 500)

@@ -1,5 +1,3 @@
-Flask
-Werkzeug
-Flask-RESTful 
-psycopg2-binary 
+flask
+psycopg2-binary
 Flask-SQLAlchemy
