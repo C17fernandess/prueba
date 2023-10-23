@@ -1,6 +1,16 @@
 version: "3.9"
 
 services:
+  flask_app:
+    container_name: flask_app
+    image: francescoxx/flask_live_app:1.0.0
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_URL=postgresql://postgres:postgres@flask_db:5432/postgres
+    depends_on:
+      - flask_db
   flask-db:
     container_name: flask_db
     image: postgres:12
@@ -13,18 +23,6 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      start_period: 30s
-  flask_app:
-    container_name: flask_app
-    image: francescoxx/flask_live_app:1.0.0
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - DB_URL=postgresql://postgres:postgres@flask_db:5432/postgres
-    depends_on:
-      - flask_db
+    
 volumes:
   pgdata: {}
