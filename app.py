@@ -17,7 +17,7 @@ class Usuarios(db.Model):
         return {'id' : id,'nombre_usuario' : self.nombre_usuario,'correos_usuario' : self.correos_usuario }
 
 with current_app.app_context():
-        db.create_all()
+    db.create_all()
 
 @app.route('/usuarios', methods = ['POST'])
 def CrearUsuario():
